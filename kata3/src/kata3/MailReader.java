@@ -9,7 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class MailReader {
-    
+
     private final String filePath;
 
     public MailReader(String filePath) {
@@ -17,18 +17,24 @@ public class MailReader {
     }
     
     public String[] readDomains(){
-        ArrayList<String> domainList = new ArrayList<>();
+        BufferedReader reader = null;
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(filePath));
-            String line = reader.readLine();
-            while (line != null){
-               if (line.contains("@"))
-                    domainList.add(line.split("@")[1]);
-                line = reader.readLine(); 
+            reader = new BufferedReader (new FileReader(filePath));
+            ArrayList<String> domainList = new ArrayList<>();
+            while(true){
+                String line = reader.readLine();
+                if (line == null) break;
+                if (line.contains("@"))
+                    domainList.add(line.split("@") [1]);
             }
+            reader.close();
+            return domainList.toArray(new String[domainList.size()]);
         } catch (IOException ex) {
+            try {
+                reader.close();
+            } catch (IOException ex1) {}
+            return new String[0];
             
         }
-        return domainList.toArray(new String [domainList.size()]);
     }
 }
